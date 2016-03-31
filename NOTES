@@ -1,0 +1,24 @@
+Board will be split into a grid. the grid will contain sections for walls
+and passageways A passageway should be wide enough for the movable entities.
+Pre-rendered art will be used for player, enemies, items, and walls.
+
++---------+
+|  _____  |
+|   C     |
++---------+
+
+Entities will be allowed to move from one grid to another grid, provided
+the grid doesn't contian a wall.
+
+Enitity will be a single class that can be a player, Enemy, or item, and can be
+either movable or in-movable.
+
+grid will be 28 wide, by  31 tall.
+
+Entities can be the size of 1.5 grids on screen, while walls are .75 of a grid.
+This gives an illusion of smaller drawn walls, while preserving grid system
+
+grid location will be a 10 pixel square
+
+
+day 1: 1.5 hours, got level loader and primitive drawing of board.

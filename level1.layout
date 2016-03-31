@@ -1,0 +1,11 @@
+# ignored comment
+# W = Wall
+# P = player
+# . = pellet
+# * = poWer pellet
+# G = ghost
+WWWWWWWWWWWWWWWWWWWWWWWWWWWW
+W                          W
+W WWWWWWWWWWWWWWWWWWWWWWWW W
+W           P              W
+WWWWWWWWWWWWWWWWWWWWWWWWWWWW
