@@ -4,7 +4,7 @@ class Loader(object):
 
     def __init__(self, filename):
         f = open(filename, 'r')
-        self.grid = []
+        self.entities = []
         x = 0
         y = 0
 
@@ -17,9 +17,10 @@ class Loader(object):
                 elif c == 'W':
                     currentLine.append( entities.Wall(location = (x, y)))
                 elif c == 'P':
-                    currentLine.append( entities.Player(location = (x, y)))
+                    self.player =  entities.Player(location = (x, y))
+                    currentLine.append(self.player)
                 x += 1
 
             if (c != '#'):
                 y = y + 1;
-                self.grid.extend(currentLine)
+                self.entities.extend(currentLine)
