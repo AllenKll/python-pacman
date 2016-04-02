@@ -2,9 +2,11 @@ import entities
 
 class Loader(object):
 
+    # generates a 2D array representing the map of the Board
+    # given a layout file.
     def __init__(self, filename):
         f = open(filename, 'r')
-        self.entities = []
+        self.map = []
         x = 0
         y = 0
 
@@ -15,12 +17,14 @@ class Loader(object):
                 if c == '#':
                     break;
                 elif c == 'W':
-                    currentLine.append( entities.Wall(location = (x, y)))
+                    currentLine.append( entities.Wall())
                 elif c == 'P':
-                    self.player =  entities.Player(location = (x, y))
-                    currentLine.append(self.player)
+                    self.player =  entities.Player((x,y))
+                    currentLine.append(entities.Floor())
+                else: # space!!....
+                    currentLine.append(entities.Floor())
                 x += 1
 
             if (c != '#'):
                 y = y + 1;
-                self.entities.extend(currentLine)
+                self.map.append(currentLine)

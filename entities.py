@@ -1,11 +1,7 @@
 import pyglet
 import input
 
-class Entity(object):
-    def __init__(self, location ):
-        self.location = location
-
-class Wall(Entity):
+class Wall(object):
     def draw(self, px, py, size):
 
         pyglet.graphics.draw_indexed(4, pyglet.gl.GL_QUADS,
@@ -17,13 +13,23 @@ class Wall(Entity):
              ('c3B', (0, 0, 255, 0, 255, 0, 255, 0, 0, 128,128,128))
 )
 
-class Player(Entity):
+class Floor(object):
+    def draw(self, px, py, size):
+        pass
+
+
+class Player(object):
+
+    def __init__(self, location):
+        self.location = location
 
     direction = input.Input.MOVE_LEFT
-    percentX = 0.50
+    percentX = 0.50          # initial % location in grid
     percentY = 0.50
-    moveSpeed = 0.10
-    characterPercent = 0.70
+    moveSpeed = 0.10         # percent of grit to move per tick
+    characterPercent = 0.70  # size comapred to grid
+    moveX = 0                # the active moving direction
+    moveY = 0
     queuedCmd = None
 
     def draw(self, px, py, size):
@@ -45,59 +51,55 @@ class Player(Entity):
                     255,255,0)))
 
     def setDirection(self, cmd):
-        if ( (self.direction == input.Input.MOVE_LEFT or
-              self.direction == input.Input.MOVE_RIGHT ) and
-             (cmd == input.Input.MOVE_LEFT or
-              cmd == input.Input.MOVE_RIGHT )):
-              self.direction = cmd
-        elif ( (self.direction == input.Input.MOVE_UP or
-              self.direction == input.Input.MOVE_DOWN ) and
-             (cmd == input.Input.MOVE_UP or
-              cmd == input.Input.MOVE_DOWN )):
-              self.direction = cmd
-        else:
-            self.queuedCmd = cmd;
-            print "command queued"
+        self.queuedCmd = cmd
 
+    def stop(self, location):
+        self.location = location
+        self.percentX = .5
+        self.percentY = .5
+        self.direction = None
 
-    def tick(self, entity):
-        if ( self.direction == input.Input.MOVE_LEFT ):
-            self.percentX -= self.moveSpeed
-            if ( isinstance(entity, Wall) and self.percentX < 0.5 ):
-                self.percentX = 0.5
-        elif ( self.direction == input.Input.MOVE_RIGHT ):
-            self.percentX += self.moveSpeed
-            if ( isinstance(entity, Wall) and self.percentX > 0.5 ):
-                self.percentX = 0.5
-        elif ( self.direction == input.Input.MOVE_UP ):
-            self.percentY += self.moveSpeed
-            if ( isinstance(entity, Wall) and self.percentY > 0.5 ):
-                self.percentY = 0.5
-        elif ( self.direction == input.Input.MOVE_DOWN ):
-            self.percentY -= self.moveSpeed
-            if ( isinstance(entity, Wall) and self.percentY < 0.5 ):
-                self.percentY = 0.5
+    def tick(self, validLocations):
+        # if we're in the middle of the square, we can decide
+        # if movement is valid
+        if ( self.percentY == .5 and self.percentX == .5):
+            # if direction change, check for valid
+            if ( self.queuedCmd != None ):
+                if ( self.queuedCmd == input.Input.MOVE_LEFT and
+                     (self.location[0]-1, self.location[1]) in validLocations):
+                     self.moveX = 0 - self.moveSpeed
+                     self.moveY = 0
+                     self.queuedCmd = None
+                elif ( self.queuedCmd == input.Input.MOVE_RIGHT and
+                      (self.location[0]+1, self.location[1]) in validLocations):
+                     self.moveX = 0 + self.moveSpeed
+                     self.moveY = 0
+                     self.queuedCmd = None
+                elif ( self.queuedCmd == input.Input.MOVE_UP and
+                      (self.location[0], self.location[1]+1) in validLocations):
+                     self.moveX = 0
+                     self.moveY = 0 + self.moveSpeed
+                     self.queuedCmd = None
+                elif ( self.queuedCmd == input.Input.MOVE_DOWN and
+                      (self.location[0], self.location[1]-1) in validLocations):
+                     self.moveX = 0
+                     self.moveY = 0 - self.moveSpeed
+                     self.queuedCmd = None
 
-        if (( self.queuedCmd == input.Input.MOVE_UP or
-              self.queuedCmd == input.Input.MOVE_DOWN) and
-              self.percentX == 0.50):
-             self.direction = self.queuedCmd
-             self.queuedCmd = None
-        elif ((self.queuedCmd == input.Input.MOVE_RIGHT or
-               self.queuedCmd == input.Input.MOVE_LEFT) and
-               self.percentY == 0.50):
-             self.direction = self.queuedCmd
-             self.queuedCmd = None
+        self.percentX += self.moveX
+        self.percentY += self.moveY
 
         if ( self.percentX > 1.0):
             self.location = (self.location[0] + 1, self.location[1])
-            self.percentX = 0.0 + self.moveSpeed
+            self.percentX = 0.0
         elif ( self.percentX < 0.0):
             self.location = (self.location[0] - 1, self.location[1])
-            self.percentX = 1.0 - self.moveSpeed
+            self.percentX = 1.0
         elif ( self.percentY > 1.0):
             self.location = (self.location[0], self.location[1] + 1)
-            self.percentY = 0.0 + self.moveSpeed
+            self.percentY = 0.0
         elif ( self.percentY < 0.0):
             self.location = (self.location[0], self.location[1] - 1)
-            self.percentY = 1.0 - self.moveSpeed
+            self.percentY = 1.0
+
+        return self.location
