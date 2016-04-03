@@ -12,6 +12,8 @@ class Board(object):
         self.map = layout.map;
         self.player = layout.player;
         self.playerLocation = layout.player.location
+        self.playerDirection = input.Input.MOVE_LEFT;
+        self.queuedDirection = None;
 
     def draw(self):
         for y in range(0, len(self.map)):
@@ -25,29 +27,40 @@ class Board(object):
                          self.pxPerGrid)
 
     def command(self, cmd):
-        self.player.setDirection(cmd)
+        self.queuedDirection = cmd
 
     def isCollision(self, location):
         if ( type(self.map[location[1]][location[0]]) is entities.Wall ):
             return True
         return False
 
-    def getValidDirections(self,location):
-        # check the each direction
-        locations = []
-        if ( not self.isCollision( (location[0]+1, location[1]) )):
-            locations.append( (location[0]+1, location[1]) )
-        if ( not self.isCollision( (location[0]-1, location[1]) )):
-            locations.append( (location[0]-1, location[1]) )
-        if ( not self.isCollision( (location[0], location[1]+1) )):
-            locations.append( (location[0], location[1]+1) )
-        if ( not self.isCollision( (location[0], location[1]-1) )):
-            locations.append( (location[0], location[1]-1) )
-        return locations
+    def directionIsValid(self, direction, location):
+        if ( direction == input.Input.MOVE_LEFT and
+             not self.isCollision( (location[0]-1, location[1]) )):
+            return True;
+        elif ( direction == input.Input.MOVE_RIGHT and
+               not self.isCollision( (location[0]+1, location[1]) )):
+            return True;
+        elif ( direction == input.Input.MOVE_UP and
+               not self.isCollision( (location[0], location[1]+1) )):
+            return True;
+        elif ( direction == input.Input.MOVE_DOWN and
+               not self.isCollision( (location[0], location[1]-1) )):
+            return True;
+        return False
 
     def updateTick(self):
-        oldLocation = self.player.location
-        location = self.player.tick(self.getValidDirections(oldLocation))
+        if ( self.queuedDirection != None and
+             self.directionIsValid(self.queuedDirection,
+                               self.playerLocation) ):
+            self.player.move(self.queuedDirection)
+            self.playerDirection = self.queuedDirection
+        elif (self.directionIsValid(self.playerDirection,
+                               self.playerLocation)):
+            self.player.move(self.playerDirection)
+        else:
+            self.player.move(None)
+
+        location = self.player.tick()
 
         self.playerLocation = location
-        print self.playerLocation

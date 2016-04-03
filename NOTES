@@ -24,3 +24,4 @@ grid location will be a 10 pixel square
 day 1: 1.5 hours, got level loader and primitive drawing of board.
 day 2: 1.5 hours, got movement in and some collision detection, problem in corners.
 day 3: 2 hours: tried to fix cornering problem. only made things worse.
+day 4: 16:15

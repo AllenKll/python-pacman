@@ -23,18 +23,20 @@ class Player(object):
     def __init__(self, location):
         self.location = location
 
-    direction = input.Input.MOVE_LEFT
-    percentX = 0.50          # initial % location in grid
-    percentY = 0.50
-    moveSpeed = 0.10         # percent of grit to move per tick
+    percentX = 50          # initial % location in grid
+    percentY = 50
+    moveSpeed = 10         # percent of grit to move per tick
+                           # MUST HIT 50 IN MULTIPLES
     characterPercent = 0.70  # size comapred to grid
     moveX = 0                # the active moving direction
     moveY = 0
-    queuedCmd = None
+    queuedX = 0            # queued moving directions
+    queuedX = 0
+
 
     def draw(self, px, py, size):
-        realX = px + ( self.percentX * size)
-        realY = py + ( self.percentY * size)
+        realX = px + ( (self.percentX /100.0) * size)
+        realY = py + ( (self.percentY /100.0) * size)
         realSize = size * self.characterPercent
         halfSize = realSize / 2.0
 
@@ -50,56 +52,47 @@ class Player(object):
                     255, 255, 0,
                     255,255,0)))
 
-    def setDirection(self, cmd):
-        self.queuedCmd = cmd
+    def move(self, newDirection):
+        if ( newDirection == input.Input.MOVE_LEFT):
+            self.queuedX = 0 - self.moveSpeed
+            self.queuedY = 0
+        elif ( newDirection == input.Input.MOVE_RIGHT):
+            self.queuedX = self.moveSpeed
+            self.queuedY = 0
+        elif ( newDirection == input.Input.MOVE_UP):
+            self.queuedX = 0
+            self.queuedY = self.moveSpeed
+        elif ( newDirection == input.Input.MOVE_DOWN):
+            self.queuedX = 0
+            self.queuedY = 0 - self.moveSpeed
+        else:  # stop
+            self.queuedX = 0
+            self.queuedY = 0
 
-    def stop(self, location):
-        self.location = location
-        self.percentX = .5
-        self.percentY = .5
-        self.direction = None
 
-    def tick(self, validLocations):
+    def tick(self):
         # if we're in the middle of the square, we can decide
-        # if movement is valid
-        if ( self.percentY == .5 and self.percentX == .5):
-            # if direction change, check for valid
-            if ( self.queuedCmd != None ):
-                if ( self.queuedCmd == input.Input.MOVE_LEFT and
-                     (self.location[0]-1, self.location[1]) in validLocations):
-                     self.moveX = 0 - self.moveSpeed
-                     self.moveY = 0
-                     self.queuedCmd = None
-                elif ( self.queuedCmd == input.Input.MOVE_RIGHT and
-                      (self.location[0]+1, self.location[1]) in validLocations):
-                     self.moveX = 0 + self.moveSpeed
-                     self.moveY = 0
-                     self.queuedCmd = None
-                elif ( self.queuedCmd == input.Input.MOVE_UP and
-                      (self.location[0], self.location[1]+1) in validLocations):
-                     self.moveX = 0
-                     self.moveY = 0 + self.moveSpeed
-                     self.queuedCmd = None
-                elif ( self.queuedCmd == input.Input.MOVE_DOWN and
-                      (self.location[0], self.location[1]-1) in validLocations):
-                     self.moveX = 0
-                     self.moveY = 0 - self.moveSpeed
-                     self.queuedCmd = None
+        # to change direction
+        if ( self.percentY == 50 and self.percentX == 50):
+            self.moveX = self.queuedX
+            self.moveY = self.queuedY
 
+        # move
         self.percentX += self.moveX
         self.percentY += self.moveY
 
-        if ( self.percentX > 1.0):
+        # handle grid changes due to move.
+        if ( self.percentX > 100):
             self.location = (self.location[0] + 1, self.location[1])
-            self.percentX = 0.0
-        elif ( self.percentX < 0.0):
+            self.percentX = self.moveX
+        elif ( self.percentX < 0):
             self.location = (self.location[0] - 1, self.location[1])
-            self.percentX = 1.0
-        elif ( self.percentY > 1.0):
+            self.percentX = 100 - self.moveX
+        elif ( self.percentY > 100):
             self.location = (self.location[0], self.location[1] + 1)
-            self.percentY = 0.0
-        elif ( self.percentY < 0.0):
+            self.percentY = self.moveY
+        elif ( self.percentY < 0):
             self.location = (self.location[0], self.location[1] - 1)
-            self.percentY = 1.0
+            self.percentY = 100 - self.moveY
 
         return self.location
