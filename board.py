@@ -14,6 +14,8 @@ class Board(object):
         self.playerLocation = layout.player.location
         self.playerDirection = input.Input.MOVE_LEFT;
         self.queuedDirection = None;
+        self.gulp = pyglet.media.load('eating.wav', streaming=False)
+
 
     def draw(self):
         for y in range(0, len(self.map)):
@@ -29,23 +31,23 @@ class Board(object):
     def command(self, cmd):
         self.queuedDirection = cmd
 
-    def isCollision(self, location):
-        if ( type(self.map[location[1]][location[0]]) is entities.Wall ):
+    def isCollision(self, location, className):
+        if ( type(self.map[location[1]][location[0]]) is className ):
             return True
         return False
 
     def directionIsValid(self, direction, location):
         if ( direction == input.Input.MOVE_LEFT and
-             not self.isCollision( (location[0]-1, location[1]) )):
+             not self.isCollision( (location[0]-1, location[1]), entities.Wall)):
             return True;
         elif ( direction == input.Input.MOVE_RIGHT and
-               not self.isCollision( (location[0]+1, location[1]) )):
+               not self.isCollision( (location[0]+1, location[1]), entities.Wall )):
             return True;
         elif ( direction == input.Input.MOVE_UP and
-               not self.isCollision( (location[0], location[1]+1) )):
+               not self.isCollision( (location[0], location[1]+1), entities.Wall )):
             return True;
         elif ( direction == input.Input.MOVE_DOWN and
-               not self.isCollision( (location[0], location[1]-1) )):
+               not self.isCollision( (location[0], location[1]-1), entities.Wall )):
             return True;
         return False
 
@@ -64,3 +66,6 @@ class Board(object):
         location = self.player.tick()
 
         self.playerLocation = location
+        if ( self.isCollision ( self.playerLocation, entities.Pellet )):
+            self.map[self.playerLocation[1]][self.playerLocation[0]] = entities.Floor();
+            self.gulp.play()

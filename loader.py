@@ -16,9 +16,11 @@ class Loader(object):
             for c in line:
                 if c == '#':
                     break;
-                elif c == 'W':
+                elif c == '.':
+                    currentLine.append( entities.Pellet())
+                elif c == 'W' or c == 'w':
                     currentLine.append( entities.Wall())
-                elif c == 'P':
+                elif c == 'P' or c == 'p':
                     self.player =  entities.Player((x,y))
                     currentLine.append(entities.Floor())
                 else: # space!!....

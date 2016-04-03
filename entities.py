@@ -10,13 +10,33 @@ class Wall(object):
              px+size, py,
              px+size, py+size,
              px, py+size)),
-             ('c3B', (0, 0, 255, 0, 255, 0, 255, 0, 0, 128,128,128))
+             ('c3B', (0,0,255, 0,0,255, 0,0,255, 0,0,255))
 )
 
 class Floor(object):
     def draw(self, px, py, size):
         pass
 
+class Pellet(object):
+    characterPercent = 0.10
+
+    def draw(self, px, py, size):
+        realX = px + ( size / 2.0 )
+        realY = py + ( size / 2.0 )
+        realSize = size * self.characterPercent
+        halfSize = realSize / 2.0
+
+        pyglet.graphics.draw_indexed(4, pyglet.gl.GL_QUADS,
+            [0,1,2,3],
+            ('v2f', (realX-halfSize, realY-halfSize,
+                     realX-halfSize, realY+halfSize,
+                     realX+halfSize, realY+halfSize,
+                     realX+halfSize, realY-halfSize)),
+            ('c3B',
+                    (255,255,255,
+                     255,255,255,
+                     255,255,255,
+                     255,255,250)))
 
 class Player(object):
 
@@ -84,15 +104,15 @@ class Player(object):
         # handle grid changes due to move.
         if ( self.percentX > 100):
             self.location = (self.location[0] + 1, self.location[1])
-            self.percentX = self.moveX
+            self.percentX -= 100
         elif ( self.percentX < 0):
             self.location = (self.location[0] - 1, self.location[1])
-            self.percentX = 100 - self.moveX
+            self.percentX += 100
         elif ( self.percentY > 100):
             self.location = (self.location[0], self.location[1] + 1)
-            self.percentY = self.moveY
+            self.percentY -= 100
         elif ( self.percentY < 0):
             self.location = (self.location[0], self.location[1] - 1)
-            self.percentY = 100 - self.moveY
+            self.percentY += 100
 
         return self.location
