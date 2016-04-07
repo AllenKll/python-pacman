@@ -2,14 +2,32 @@
 # W = Wall
 # P = player
 # . = pellet
-# * = poWer pellet
-# G = ghost
-WWWWWWWWWWWWWWWWWWWWWWWWWWWW
-W......W........W..........W
-WWWW.WWW.WWWWWW.W.WWWWWWWW.W
-W..........................W
-WWWWWW.WWWWWWWWWWWWWWWWWW.WW
-W..........................W
-W.WWWWWWWWWWWWWWWWWWWWWWWW.W
-W...........P..............W
-WWWWWWWWWWWWWWWWWWWWWWWWWWWW
+# * = power pellet
+# B = Blinky (Red)
+# K = Pinky  (pink)
+# I = Inky   (Blue)
+# C = Clyde  (Orange)
+# D = ghost door
+
+WWWWWWWWWWWWWWWWWWW
+W.................W
+W.WWWWWW.W.WWWWWW.W
+W....W...W...W....W
+WW.W.W.WWWWW.W.W.WW
+W..W.....P.....W..W
+W.WW.WWW.W.WWW.WW.W
+W........W........W
+WWWW.W WWWWW W.WWWW
+   W.W       W.W
+   W.W WWWWW W.W
+   W.  WKICW  .W
+   W.W WWDWW W.W
+   W.W   B   W.W
+WWWW.WWW W WWW.WWWW
+W....W...W...W....W
+W.WW.W.WWWWW.W.WW.W
+W.................W
+W.WW.WWW.W.WWW.WW.W
+W.WW.WWW.W.WWW.WW.W
+W........W........W
+WWWWWWWWWWWWWWWWWWW

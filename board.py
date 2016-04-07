@@ -11,6 +11,7 @@ class Board(object):
         self.pxPerGrid = pixels
         self.map = layout.map;
         self.player = layout.player;
+        self.ghosts = layout.ghosts;
         self.playerLocation = layout.player.location
         self.playerDirection = input.Input.MOVE_LEFT;
         self.queuedDirection = None;
@@ -23,6 +24,11 @@ class Board(object):
                 self.map[y][x].draw(x*self.pxPerGrid + self.x,
                                     y*self.pxPerGrid + self.y,
                                     self.pxPerGrid )
+
+        for ghost in self.ghosts:
+            ghost.draw(ghost.location[0] * self.pxPerGrid + self.x,
+                       ghost.location[1] * self.pxPerGrid + self.y,
+                        self.pxPerGrid)
 
         self.player.draw(self.playerLocation[0] * self.pxPerGrid + self.x,
                          self.playerLocation[1] * self.pxPerGrid + self.y,
@@ -52,6 +58,9 @@ class Board(object):
         return False
 
     def updateTick(self):
+        scoreChange = 0
+        lifeChange = 0
+
         if ( self.queuedDirection != None and
              self.directionIsValid(self.queuedDirection,
                                self.playerLocation) ):
@@ -68,4 +77,12 @@ class Board(object):
         self.playerLocation = location
         if ( self.isCollision ( self.playerLocation, entities.Pellet )):
             self.map[self.playerLocation[1]][self.playerLocation[0]] = entities.Floor();
+            scoreChange += 10
             self.gulp.play()
+
+        for ghost in self.ghosts:
+            ghost.think(location)
+            if ( location == ghost.location):
+                lifeChange = -1
+
+        return scoreChange, lifeChange

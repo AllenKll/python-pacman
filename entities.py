@@ -38,14 +38,13 @@ class Pellet(object):
                      255,255,255,
                      255,255,250)))
 
-class Player(object):
-
+class Movable(object):
     def __init__(self, location):
         self.location = location
 
     percentX = 50          # initial % location in grid
     percentY = 50
-    moveSpeed = 10         # percent of grit to move per tick
+    moveSpeed = 25         # percent of grit to move per tick
                            # MUST HIT 50 IN MULTIPLES
     characterPercent = 0.70  # size comapred to grid
     moveX = 0                # the active moving direction
@@ -53,6 +52,38 @@ class Player(object):
     queuedX = 0            # queued moving directions
     queuedX = 0
 
+    def draw(self, x, y, size):
+        pass
+
+    def tick(self):
+        # if we're in the middle of the square, we can decide
+        # to change direction
+        if ( self.percentY == 50 and self.percentX == 50):
+            self.moveX = self.queuedX
+            self.moveY = self.queuedY
+
+        # move
+        self.percentX += self.moveX
+        self.percentY += self.moveY
+
+        # handle grid changes due to move.
+        if ( self.percentX > 100):
+            self.location = (self.location[0] + 1, self.location[1])
+            self.percentX -= 100
+        elif ( self.percentX < 0):
+            self.location = (self.location[0] - 1, self.location[1])
+            self.percentX += 100
+        elif ( self.percentY > 100):
+            self.location = (self.location[0], self.location[1] + 1)
+            self.percentY -= 100
+        elif ( self.percentY < 0):
+            self.location = (self.location[0], self.location[1] - 1)
+            self.percentY += 100
+
+        return self.location
+
+
+class Player(Movable):
 
     def draw(self, px, py, size):
         realX = px + ( (self.percentX /100.0) * size)
@@ -89,30 +120,25 @@ class Player(object):
             self.queuedX = 0
             self.queuedY = 0
 
+class Blinky(Player):
 
-    def tick(self):
-        # if we're in the middle of the square, we can decide
-        # to change direction
-        if ( self.percentY == 50 and self.percentX == 50):
-            self.moveX = self.queuedX
-            self.moveY = self.queuedY
+    def draw(self, px, py, size):
+        realX = px + ( (self.percentX /100.0) * size)
+        realY = py + ( (self.percentY /100.0) * size)
+        realSize = size * self.characterPercent
+        halfSize = realSize / 2.0
 
-        # move
-        self.percentX += self.moveX
-        self.percentY += self.moveY
+        pyglet.graphics.draw_indexed(4, pyglet.gl.GL_QUADS,
+            [0,1,2,3],
+            ('v2f', (realX-halfSize, realY-halfSize,
+                    realX-halfSize, realY+halfSize,
+                    realX+halfSize, realY+halfSize,
+                    realX+halfSize, realY-halfSize)),
+            ('c3B',
+                    (255, 0, 0,
+                    255, 0, 0,
+                    255, 0, 0,
+                    255, 0,0)))
 
-        # handle grid changes due to move.
-        if ( self.percentX > 100):
-            self.location = (self.location[0] + 1, self.location[1])
-            self.percentX -= 100
-        elif ( self.percentX < 0):
-            self.location = (self.location[0] - 1, self.location[1])
-            self.percentX += 100
-        elif ( self.percentY > 100):
-            self.location = (self.location[0], self.location[1] + 1)
-            self.percentY -= 100
-        elif ( self.percentY < 0):
-            self.location = (self.location[0], self.location[1] - 1)
-            self.percentY += 100
-
-        return self.location
+    def think(self, playerLocation):
+        pass

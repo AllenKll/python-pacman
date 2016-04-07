@@ -7,6 +7,7 @@ class Loader(object):
     def __init__(self, filename):
         f = open(filename, 'r')
         self.map = []
+        self.ghosts = []
         x = 0
         y = 0
 
@@ -22,6 +23,9 @@ class Loader(object):
                     currentLine.append( entities.Wall())
                 elif c == 'P' or c == 'p':
                     self.player =  entities.Player((x,y))
+                    currentLine.append(entities.Floor())
+                elif c == 'B' or c == 'b':
+                    self.ghosts.append(entities.Blinky((x,y)))
                     currentLine.append(entities.Floor())
                 else: # space!!....
                     currentLine.append(entities.Floor())

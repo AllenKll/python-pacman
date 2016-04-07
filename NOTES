@@ -8,9 +8,9 @@ Pre-rendered art will be used for player, enemies, items, and walls.
 +---------+
 
 Entities will be allowed to move from one grid to another grid, provided
-the grid doesn't contian a wall.
+the grid doesn't contain a wall.
 
-Enitity will be a single class that can be a player, Enemy, or item, and can be
+Entity will be a single class that can be a player, Enemy, or item, and can be
 either movable or in-movable.
 
 grid will be 28 wide, by  31 tall.
@@ -26,3 +26,5 @@ day 2: 1.5 hours, got movement in and some collision detection, problem in corne
 day 3: 2 hours: tried to fix cornering problem. only made things worse.
 day 4: 1.75 hours: sorted cornering problem, made better level, turned walls blue,
                    add pellets and pellet detection and sound.
+day 5: 1 hour: Add scoring, Add game info display, pacman layout no portals,
+                   add blinky (no AI yet), add ghost collision detestion
